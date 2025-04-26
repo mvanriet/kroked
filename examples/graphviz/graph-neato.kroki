@@ -132,5 +132,5 @@ graph happiness {
 		Pets
 		Wildlife
 	}
-	c [label="© 2020-2022 Costa Shulyupin" fontsize=12 shape=plain style="" fontcolor=gray]
+	c [label="__ 2020-2022 Costa Shulyupin" fontsize=12 shape=plain style="" fontcolor=gray]
 }

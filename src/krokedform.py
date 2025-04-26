@@ -1,3 +1,8 @@
+#  _  _____  ___  _  _____ ___  
+# | |/ / _ \/ _ \| |/ / __|   \    Kroki Editor - diagrams using Kroki
+# | ' <|   / (_) | ' <| _|| |) |   (c) 2025 Marc Van Riet - Apache License 2.0
+# |_|\_\_|_\\___/|_|\_\___|___/    See https://github.com/mvanriet/kroked
+# ____________________________________________________________________________
 
 import configparser
 import os
@@ -5,12 +10,17 @@ import wx
 from formsbase import KrokedForm_Base
 import requests
 
+INIFILENAME = os.path.join(os.path.dirname(__file__), "kroked.ini")
+
 URL = "https://kroki.io/"
 
 FORMATS = {
+    "blockdiag": "png,svg,pdf",
     "graphviz": "png,svg,jpg,pdf",
     "seqdiag": "png,svg,pdf",
     "mermaid": "png,svg",
+    "packetdiag": "png,svg,pdf",
+    "wireviz": "png,svg",
     }
 
 class KrokedForm(KrokedForm_Base):
@@ -23,7 +33,6 @@ class KrokedForm(KrokedForm_Base):
 
         self.file_in_editor = None
 
-        self.ScanFolder(os.path.dirname(__file__))
 
     def OnBtnOpenFolder(self, event):
 
@@ -37,14 +46,13 @@ class KrokedForm(KrokedForm_Base):
         self.ScanFolder(dirname)
 
     def OnFormClose( self, event ):
+        self.save_current_file()
         self.SavePosition()     
         self.Destroy()                                              # delete the frame
         wx.GetApp().ExitMainLoop()
 
     def ScanFolder(self, folder_path):
-        # Implement the logic to scan the folder and update the list control
-        # For example, you can use os.listdir() to get the files in the directory
-        import os
+
 
         if not os.path.isdir(folder_path):
             return
@@ -82,7 +90,7 @@ class KrokedForm(KrokedForm_Base):
         return havefiles
 
     def OnBtnSave( self, event ):
-        self.m_txtEditor.LoadFile(r"D:\MyData\Projects\Python\kroked\main.py",  wx.richtext.RICHTEXT_TYPE_TEXT)
+       pass
 
 
 
@@ -133,11 +141,6 @@ class KrokedForm(KrokedForm_Base):
         return result
 
 
-    def OnBtnRefresh2( self, event ):
-        idx = self.m_cboFilename.GetCurrentSelection()
-        fname = self.m_cboFilename.GetString(idx)
-
-
 
 
     def show_svg(self):
@@ -169,11 +172,19 @@ class KrokedForm(KrokedForm_Base):
                 self.show_graph_preview()
 
 
+    def OnDropdownFileSelect( self, event ):
+        fname = self.m_cboFilename.GetStringSelection()
+        if not fname:
+            return
+
+        self.load_file(fname)
+        self.show_graph_preview()
 
     def load_file( self, path ):
 
         if self.file_in_editor:
             self.save_current_file()
+            self.file_in_editor = None
 
         self.m_txtEditor.Clear()
         self.m_txtEditor.LoadFile(path,  wx.richtext.RICHTEXT_TYPE_TEXT)
@@ -190,6 +201,7 @@ class KrokedForm(KrokedForm_Base):
         fname = self.file_in_editor
 
         if fname:
+            print(f"Saving file: {fname}")
             self.m_txtEditor.SaveFile(fname,  wx.richtext.RICHTEXT_TYPE_TEXT)
             self.m_txtEditor.SetFocus()
 
@@ -200,7 +212,7 @@ class KrokedForm(KrokedForm_Base):
         section = "MAINFORM_LAYOUT"
 
         ini = configparser.ConfigParser()
-        ini.read( ["kroked.ini"] )
+        ini.read( [INIFILENAME] )
         
         # restore window and pane position
         
@@ -230,7 +242,7 @@ class KrokedForm(KrokedForm_Base):
         width, height = self.GetSize()
         
         ini = configparser.ConfigParser()
-        ini.read( ["kroked.ini"] )
+        ini.read( [INIFILENAME] )
         if not ini.has_section(section):
             ini.add_section(section)
         ini.set(section, "WindowX", str(x) )
@@ -240,5 +252,5 @@ class KrokedForm(KrokedForm_Base):
         
         # ini.set(section, "pane_layout", self.m_mgr.SavePerspective() )
                         
-        with open("kroked.ini", "w") as inifile:
+        with open(INIFILENAME, "w") as inifile:
             ini.write(inifile)                    
