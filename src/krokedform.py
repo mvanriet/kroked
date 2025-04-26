@@ -32,18 +32,49 @@ class KrokedForm(KrokedForm_Base):
         self.open_files = []
 
         self.file_in_editor = None
+        self.dir_in_tree = None
 
 
     def OnBtnOpenFolder(self, event):
 
-        dirname = None
 
-        # Open a directory selection dialog
-        with wx.DirDialog(self, "Choose a directory", style=wx.DD_DEFAULT_STYLE) as dialog:
+        section = "FOLDERS"
+
+        ini = configparser.ConfigParser()
+        ini.read( [INIFILENAME] )
+
+        prev_folder = ""       
+        if ini.has_section(section):
+            dirname = ini.get(section, "PreviousDir")
+            if os.path.isdir(dirname):
+                prev_folder = dirname
+
+        dirname = None
+        with wx.DirDialog(self, "Choose a directory",
+                            style=wx.DD_DEFAULT_STYLE,
+                            defaultPath=prev_folder) as dialog:
+            
             if dialog.ShowModal() == wx.ID_OK:
                 dirname = dialog.GetPath()
 
-        self.ScanFolder(dirname)
+                self.dir_in_tree = dirname
+
+                if not ini.has_section(section):
+                    ini.add_section(section)
+                ini.set(section, "PreviousDir", dirname )
+
+                with open(INIFILENAME, "w") as inifile:
+                    ini.write(inifile)        
+
+                self.ScanFolder(dirname)
+
+
+    def OnBtnRescan( self, event ):
+        if self.dir_in_tree is not None and os.path.isdir(self.dir_in_tree):
+            self.ScanFolder(self.dir_in_tree)
+        else:
+            wx.MessageBox("No valid folder selected", "Error", wx.OK | wx.ICON_ERROR)
+
 
     def OnFormClose( self, event ):
         self.save_current_file()
