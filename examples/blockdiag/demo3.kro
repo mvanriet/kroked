@@ -1,6 +1,6 @@
 # blockdiag
 blockdiag {
-   // Set boder-style, backgroun-color and text-color to nodes.
+   // Set boder-style, backgroun-color and text-color to nodes
    A [style = dotted];
    B [style = dashed];
    C [color = pink, style = "3,3,3,3,15,3"]; //dashed_array format style

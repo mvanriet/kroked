@@ -65,21 +65,6 @@ class KrokedForm_Base ( wx.Frame ):
 
         bSizer23 = wx.BoxSizer( wx.VERTICAL )
 
-        bSizer24 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText14 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"File", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText14.Wrap( -1 )
-
-        bSizer24.Add( self.m_staticText14, 0, wx.ALL, 5 )
-
-        m_cboFilenameChoices = []
-        self.m_cboFilename = wx.Choice( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_cboFilenameChoices, 0 )
-        self.m_cboFilename.SetSelection( 0 )
-        bSizer24.Add( self.m_cboFilename, 3, wx.ALL|wx.EXPAND, 5 )
-
-
-        bSizer23.Add( bSizer24, 0, wx.EXPAND, 5 )
-
         bSizer25 = wx.BoxSizer( wx.HORIZONTAL )
 
 
@@ -122,6 +107,9 @@ class KrokedForm_Base ( wx.Frame ):
         self.m_btnRefresh = wx.Button( self.m_panel6, wx.ID_ANY, u"Refresh", wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer26.Add( self.m_btnRefresh, 0, wx.ALL, 5 )
 
+        self.m_btnCopyPng = wx.Button( self.m_panel6, wx.ID_ANY, u"Copy PNG", wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer26.Add( self.m_btnCopyPng, 0, wx.ALL, 5 )
+
 
         bSizer22.Add( bSizer26, 0, wx.EXPAND, 5 )
 
@@ -152,10 +140,10 @@ class KrokedForm_Base ( wx.Frame ):
         self.Bind( wx.EVT_CLOSE, self.OnFormClose )
         self.m_btnOpenFolder.Bind( wx.EVT_BUTTON, self.OnBtnOpenFolder )
         self.m_btnRescan.Bind( wx.EVT_BUTTON, self.OnBtnRescan )
-        self.m_FileTree.Bind( wx.EVT_LEFT_DCLICK, self.OnTreeDoubleClick )
-        self.m_cboFilename.Bind( wx.EVT_CHOICE, self.OnDropdownFileSelect )
+        self.m_FileTree.Bind( wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelect )
         self.m_btnSave.Bind( wx.EVT_BUTTON, self.OnBtnSave )
         self.m_btnRefresh.Bind( wx.EVT_BUTTON, self.OnBtnRefresh )
+        self.m_btnCopyPng.Bind( wx.EVT_BUTTON, self.OnBtnCopyPng )
 
     def __del__( self ):
         pass
@@ -171,16 +159,16 @@ class KrokedForm_Base ( wx.Frame ):
     def OnBtnRescan( self, event ):
         event.Skip()
 
-    def OnTreeDoubleClick( self, event ):
-        event.Skip()
-
-    def OnDropdownFileSelect( self, event ):
+    def OnTreeSelect( self, event ):
         event.Skip()
 
     def OnBtnSave( self, event ):
         event.Skip()
 
     def OnBtnRefresh( self, event ):
+        event.Skip()
+
+    def OnBtnCopyPng( self, event ):
         event.Skip()
 
     def m_splitter2OnIdle( self, event ):
